@@ -1,4 +1,4 @@
-module niyko.com/athena
+module github.com/Niyko/Athena
 
 go 1.19
 

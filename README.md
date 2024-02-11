@@ -1,2 +1,6 @@
-![Athena logo](https://i.imgur.com/Yo9ohoT.png)
-Most simple way to load Javascript, images and CSS resources asynchronously and boost page insight speed and increase the website's SEO scores. Just adding the `AsyncBee.js` file and changing the attributes will boost the Google's page insight speed from any score to 95 ~ 100. AsyncBee delays the resource to load up and synchronously loads the Javascript and other resource is right order without making any dependency errors. AsyncBee is very flexible and comes with a prebuild loading animation which can be fully customized.
+![Athena logo](https://i.imgur.com/UQggP60.png)
+Athena is a tool used to move change data capture from Microsoft SQL to Apache Kafka. Athena is written in Golang. Athena supports SASL authentication-based Kafka broker servers. Other tools like Debezium are available, but are a pain in the head to set up and manage them with MSSQL. Debezium gives you very little room for configuration while using it as a connector from services like confluent.io. Athena is very simple to set up and can be managed easily without any unwanted complications.
+
+## :cyclone: Simple Installation
+You can download the pre-compiled binaries from the Github [releases](https://github.com/Niyko/Athena/releases) page and copy them to the desired location. After that you can follow the below steps in order.
+
