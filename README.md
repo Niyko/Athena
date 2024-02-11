@@ -5,6 +5,7 @@ Athena is a tool used to move change data capture from Microsoft SQL to Apache K
 You can download the pre-compiled binaries from the Github [releases](https://github.com/Niyko/Athena/releases) page and copy them to the desired location. After that you can follow the below steps in order.
 
 #### Create a `config.json` file in the root folder where you but the Athena binary. Here is the format of the JSON file. Fill all the credentials also.
+You can find more details about the paramters in config file in below sections.
 `````json
 {
     "dbHost": "",
@@ -34,3 +35,4 @@ You can download the pre-compiled binaries from the Github [releases](https://gi
 `````bash
 athena setup
 `````
+
