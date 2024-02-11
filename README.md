@@ -31,6 +31,6 @@ You can download the pre-compiled binaries from the Github [releases](https://gi
 
 #### Run the setup command in order to create the CDC in database and other required changes (Use athena.exe for Windows binaries).
 
-`````
+`````bash
 athena setup
 `````
