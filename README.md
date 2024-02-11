@@ -1,0 +1,2 @@
+![Athena logo](https://i.imgur.com/Yo9ohoT.png)
+Most simple way to load Javascript, images and CSS resources asynchronously and boost page insight speed and increase the website's SEO scores. Just adding the `AsyncBee.js` file and changing the attributes will boost the Google's page insight speed from any score to 95 ~ 100. AsyncBee delays the resource to load up and synchronously loads the Javascript and other resource is right order without making any dependency errors. AsyncBee is very flexible and comes with a prebuild loading animation which can be fully customized.
