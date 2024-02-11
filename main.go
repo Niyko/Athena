@@ -8,7 +8,7 @@ import (
 
 func main() {
 	if len(os.Args) > 1 {
-		if os.Args[1] == "start" {
+		if os.Args[1] == "run" {
 			startDemon()
 		} else if os.Args[1] == "setup" {
 			installAthena()
@@ -23,7 +23,7 @@ func main() {
 		} else if os.Args[1] == "help" {
 			printHelp()
 		} else {
-			color.Red("⛔️ Command is not found")
+			color.Red("⛔️  Command is not found")
 			color.White("  ")
 			printHelp()
 		}
@@ -37,7 +37,7 @@ func installAthena() {
 	runSqliteMigration()
 
 	color.White("  ")
-	color.Cyan("🪅 Athena is ready to be started")
+	color.Cyan("🪅  Athena is ready to be started")
 }
 
 func uninstallAthena() {
@@ -49,15 +49,21 @@ func uninstallAthena() {
 }
 
 func printHelp() {
-	color.New(color.FgCyan, color.Bold).Printf("🪅 Athena • v1.01\n")
+	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.01\n")
 	color.White("Go to https://github.com/cristalhq/acmd for more info")
 	color.Yellow("\n Usage:")
-	color.New(color.FgGreen).Printf("\tstart")
+	color.New(color.FgGreen).Printf("\trun")
 	color.White(" - To run the change data capture demon\n")
 	color.New(color.FgGreen).Printf("\tsetup")
+	color.White(" - Setup all required things for Athena\n")
+	color.New(color.FgGreen).Printf("\tadd-cdc")
 	color.White(" - Setup change data caputure in MSSQL database\n")
+	color.New(color.FgGreen).Printf("\tremove-cdc")
+	color.White(" - Remove change data caputure in MSSQL database\n")
+	color.New(color.FgGreen).Printf("\trecreate-sqlite")
+	color.White(" - Recreate the SQlite database of Athena\n")
 	color.New(color.FgGreen).Printf("\tuninstall")
-	color.White(" - Disable data caputure in MSSQL database and uninstall Athena\n")
+	color.White(" - Uninstall the things that needed for Athena\n")
 	color.New(color.FgGreen).Printf("\thelp")
 	color.White(" - Display help details of all commands")
 }

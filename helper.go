@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/fatih/color"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+
+	"github.com/fatih/color"
 )
 
 type Config struct {
@@ -23,12 +25,11 @@ type Config struct {
 
 	PollInterval int `json:"pollInterval"`
 	FetchLimit int `json:"fetchLimit"`
-	MssqlCDCRetentionPeriod int `json:"mssqlCDCRetentionPeriod"`
 	SkippedTables []string `json:"skippedTables"`
 }
 
 func getConfig() Config {
-	configFilePath := "config.json"
+	configFilePath := getExePath() + "config.json"
 
 	configFileContent, error := ioutil.ReadFile(configFilePath)
 	if error != nil {
@@ -54,4 +55,26 @@ func contains[T comparable](arr []T, x T) bool {
         }
     }
     return false
+}
+
+func getExePath() string {
+	if os.Getenv("GORUN") != "" {
+		exeDir, error := os.Getwd()
+		if error != nil {
+			color.Red("Error while getting executable path (%s)", error)
+			os.Exit(0)
+		}
+		
+		return exeDir + string(filepath.Separator)
+	} else {
+		exePath, error := os.Executable()
+		if error != nil {
+			color.Red("Error while getting executable path (%s)", error)
+			os.Exit(0)
+		}
+	
+		exeDir := filepath.Dir(exePath)
+
+		return exeDir + string(filepath.Separator)
+	}
 }

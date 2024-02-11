@@ -23,7 +23,6 @@ You can find more details about the paramters in config file in below sections.
 
     "pollInterval": 10,
     "fetchLimit": 50,
-    "mssqlCDCRetentionPeriod": 1440,
     "skippedTables": []
 }
 `````
@@ -33,6 +32,48 @@ You can find more details about the paramters in config file in below sections.
 #### Run the setup command in order to create the CDC in database and other required changes (Use athena.exe for Windows binaries).
 
 `````bash
-athena setup
+./athena setup
 `````
 
+#### Setup a service for running Athena in the background. Setting this up will different for Windows and Linux. Below given are the steps to create them on a Linux distro.
+
+#### Create a service file called `athena_mssql_kafka.service` in the directory `/etc/systemd/system` using the following commands.
+
+`````bash
+cd /etc/systemd/system
+nano athena_mssql_kafka.service
+`````
+
+#### Copy and paste the below contents to the above created service file `athena_mssql_kafka.service`.
+
+`````s
+[Unit]
+Description=Athena MSSQL Kafka Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/MrtIntl-UAEN-Sadmin/athena run
+
+[Install]
+WantedBy=multi-user.target
+`````
+
+#### Now you can start the service and also check the status of the service.
+
+`````bash
+systemctl start athena_mmsql_kafka.service
+systemctl status athena_mmsql_kafka.service
+`````
+
+## :gear: Configuring Athena
+Athena can be configured using the `config.json` file created on the root the Athena binary. Here are the details of the configuration keys and what they do in table format. Please not that MSSQL and Kafka connection options are not included on the table.
+
+| Option | Description | Example |
+| --- | --- | --- | --- |
+| `pollInterval` | Interval where next polling to the database is made. It's given in seconds format. | 10 |
+| `fetchLimit` | Number of CDC changes rows that will be pulled from the table at once. | 50 |
+| `skippedTables` | Array of tables that needs to skipped while taking CDC changes. | ["table1", "table2"] |
+
+## :page_with_curl: License
+Athena is licensed under the [GNU GENERAL PUBLIC LICENSE](https://github.com/Niyko/Athena/blob/master/LICENSE), And this repo is made for educational purpose.

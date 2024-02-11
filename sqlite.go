@@ -1,16 +1,17 @@
 package main
 
 import (
+	"os"
+
 	"github.com/fatih/color"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 type CDCLastTableLSN struct {
 	gorm.Model
-	TableName string  `gorm:"unique"`
+	TableName string `gorm:"unique"`
 	LSN       string
 }
 
@@ -26,14 +27,14 @@ func runSqliteMigration() {
 	}
 	defer sqliteFile.Close()
 
-	color.Green("✅ SQlite file has been created")
+	color.Green("✅  SQlite file has been created")
 
 	sqliteDatabase := getSqliteConnection()
 
 	sqliteDatabase.Migrator().CreateTable(&CDCLastTableLSN{})
 
 	color.White("  ")
-	color.White("✅ SQlite migration has been completed")
+	color.White("✅  SQlite migration has been completed")
 }
 
 func deleteSqliteDatabase() {
@@ -45,12 +46,12 @@ func deleteSqliteDatabase() {
 			os.Exit(0)
 		}
 
-		color.Yellow("✅ SQlite file has been deleted")
+		color.Yellow("✅  SQlite file has been deleted")
 	}
 }
 
 func getSqliteConnection() *gorm.DB {
-	database, error := gorm.Open(sqlite.Open("db.sqlite"), &gorm.Config{
+	database, error := gorm.Open(sqlite.Open(getExePath() + "db.sqlite"), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 

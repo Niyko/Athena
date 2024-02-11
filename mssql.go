@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
+
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/fatih/color"
-	"os"
 )
 
 func setupMSSQLCDC() {
@@ -15,7 +16,7 @@ func setupMSSQLCDC() {
 	defer database.Close()
 
 	if checkMSSQLDatabaseCDCEnabled(config, database) {
-		color.Yellow("✅ CDC is already enabled in database level MSSQL")
+		color.Yellow("✅  CDC is already enabled in database level MSSQL")
 	}
 
 	if !checkMSSQLDatabaseCDCEnabled(config, database) {
@@ -31,7 +32,7 @@ func setupMSSQLCDC() {
 		}
 		defer result.Close()
 
-		color.Green("✅ CDC is enabled in database level MSSQL\n")
+		color.Green("✅  CDC is enabled in database level MSSQL\n")
 	}
 
 	if !checkMSSQLDatabaseCDCEnabled(config, database) {
@@ -45,12 +46,12 @@ func setupMSSQLCDC() {
 
 	for _, tableName := range tablesList {
 		if contains(config.SkippedTables, tableName) {
-			color.Cyan("🟦 Table [%s] is skipped from tacking as added in config file", tableName)
+			color.Cyan("🟦  Table [%s] is skipped from tacking as added in config file", tableName)
 			continue
 		}
 
 		if checkMSSQLTableCDCEnabled(tableName, database) {
-			color.Yellow("✅ CDC is already enabled in [%s] table level MSSQL", tableName)
+			color.Yellow("✅  CDC is already enabled in [%s] table level MSSQL", tableName)
 		}
 
 		if !checkMSSQLTableCDCEnabled(tableName, database) {
@@ -59,10 +60,8 @@ func setupMSSQLCDC() {
 					@source_schema = N'dbo', 
 					@source_name   = N'%s', 
 					@role_name     = NULL, 
-					@retention_period_unit = 'minutes',
-  					@retention_period = %d,
 					@supports_net_changes = 1
-			`, tableName, config.MssqlCDCRetentionPeriod))
+			`, tableName))
 			_ = result
 
 			if error != nil {
@@ -71,7 +70,7 @@ func setupMSSQLCDC() {
 			}
 			defer result.Close()
 
-			color.Green("✅ CDC is enabled in [%s] table level MSSQL", tableName)
+			color.Green("✅  CDC is enabled in [%s] table level MSSQL", tableName)
 		}
 
 		if !checkMSSQLTableCDCEnabled(tableName, database) {
@@ -81,7 +80,7 @@ func setupMSSQLCDC() {
 	}
 
 	color.White("  ")
-	color.White("✅ CDC installation completed")
+	color.White("✅  CDC installation completed")
 }
 
 func getAllTablesInMSSQL(database *sql.DB) []string {
