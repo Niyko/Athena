@@ -70,7 +70,7 @@ systemctl status athena_mmsql_kafka.service
 Athena can be configured using the `config.json` file created on the root the Athena binary. Here are the details of the configuration keys and what they do in table format. Please not that MSSQL and Kafka connection options are not included on the table.
 
 | Option | Description | Example |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | `pollInterval` | Interval where next polling to the database is made. It's given in seconds format. | 10 |
 | `fetchLimit` | Number of CDC changes rows that will be pulled from the table at once. | 50 |
 | `skippedTables` | Array of tables that needs to skipped while taking CDC changes. | ["table1", "table2"] |
