@@ -16,7 +16,7 @@ type CDCLastTableLSN struct {
 }
 
 func runSqliteMigration() {
-	sqliteFileName := "db.sqlite"
+	sqliteFileName := getExePath() + "db.sqlite"
 
 	deleteSqliteDatabase()
 
@@ -38,7 +38,7 @@ func runSqliteMigration() {
 }
 
 func deleteSqliteDatabase() {
-	sqliteFileName := "db.sqlite"
+	sqliteFileName := getExePath() + "db.sqlite"
 	if _, error := os.Stat(sqliteFileName); error == nil {
 		error := os.Remove(sqliteFileName)
 		if error != nil {

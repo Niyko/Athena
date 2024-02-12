@@ -160,6 +160,8 @@ func disableMSSQLDatabaseCDC() {
 		os.Exit(0)
 	}
 	defer result.Close()
+
+	color.Green("✅  CDC has been disabled in MSSQL database level")
 }
 
 func getMSSQLConnection() *sql.DB {
