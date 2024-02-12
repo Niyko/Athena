@@ -1,3 +1,5 @@
 athena.exe
 dist/
 db.sqlite
+config.json
+Athena.exe

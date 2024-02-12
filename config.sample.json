@@ -1,20 +1,18 @@
 {
-    "dbHost": "localhost",
+    "dbHost": "",
     "dbPort": 1433,
-    "dbUser": "sa",
-    "dbPassword": "root",
-    "dbName": "Contenthub_Live_V28_stg_QA",
+    "dbUser": "",
+    "dbPassword": "",
+    "dbName": "",
 
-    "kafkaHost": "pkc-ldvmy.centralus.azure.confluent.cloud:9092",
+    "kafkaHost": "",
     "kafkaSASLMechanisms": "PLAIN",
     "kafkaSecurityProtocol": "SASL_SSL",
-    "kafkaSASLUsername": "27GYJP4OVCUEOVSB",
-    "kafkaSASLPassword": "tFEMvGZ40yOzQiqFaqqILdlL+OKPNTdyFX2HTj6EyFWNtGysxCeGGlzIzyw1laOV",
-    "kafkaTopic": "apple",
+    "kafkaSASLUsername": "",
+    "kafkaSASLPassword": "",
+    "kafkaTopic": "",
 
     "pollInterval": 10,
     "fetchLimit": 50,
-    "skippedTables": [
-        "UserRoleRel"
-    ]
+    "skippedTables": []
 }
