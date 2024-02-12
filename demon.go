@@ -80,13 +80,15 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 			rowValues[column] = columnValue
 		}
 
-		if rowValues["__$operation"] != 0 && rowValues["__$operation"] != 3 && rowValues["__$operation"] != 5 {
+		operationCode := rowValues["__$operation"].(int64)
+
+		if operationCode != 0 && operationCode != 3 && operationCode != 5 {
 			kafkaData := map[string]interface{}{
 				"tableName": tableName,
-				"operationName": convertCDCOpertionCode(rowValues["__$operation"].(int)),
-				"operationCode": rowValues["__$operation"],
+				"operationName": convertCDCOpertionCode(operationCode),
+				"operationCode": operationCode,
 				"rowId":     rowValues["id"],
-				"rowValues": rowValues,
+				"rowValues": rowValues, 
 			}
 
 			kafkaDataString, error := json.Marshal(kafkaData)
@@ -126,7 +128,7 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 	}
 }
 
-func convertCDCOpertionCode(code int) string {
+func convertCDCOpertionCode(code int64) string {
 	if code == 1 {
 		return "insert"
 	} else if code == 2 {
