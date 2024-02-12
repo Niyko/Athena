@@ -53,11 +53,13 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/MrtIntl-UAEN-Sadmin/athena run
+ExecStart=athena run
 
 [Install]
 WantedBy=multi-user.target
 `````
+
+> Please note that path in `ExecStart` needs to change while creating the service file.
 
 #### Now you can start the service and also check the status of the service.
 
