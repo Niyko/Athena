@@ -49,7 +49,7 @@ func uninstallAthena() {
 }
 
 func printHelp() {
-	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.01\n")
+	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.02\n")
 	color.White("Go to https://github.com/cristalhq/acmd for more info")
 	color.Yellow("\n Usage:")
 	color.New(color.FgGreen).Printf("\trun")
