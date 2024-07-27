@@ -85,6 +85,7 @@ Athena can be configured using the `config.json` file created on the root the At
 | `pollInterval` | Interval where next polling to the database is made. It's given in seconds format. | 10 |
 | `fetchLimit` | Number of CDC changes rows that will be pulled from the table at once. | 50 |
 | `skippedTables` | Array of tables that needs to skipped while taking CDC changes. | ["table1", "table2"] |
+| `clickHouse` | Enable this if logging to Clickhouse is needed. | true/false |
 
 ## :hammer_and_wrench: How to build
 You can build the binaries or do development of Athena by following the below steps. Athena is build fully on Golang. So you should install latest version of Go from [here](https://go.dev/doc/install). Do note that building binaries are managed with the [Goreleaser](https://goreleaser.com/).
