@@ -97,4 +97,4 @@ You can build the binaries or do development of Athena by following the below st
 * Run the command `goreleaser release --snapshot --clean` for building the binaries.
 
 ## :page_with_curl: License
-Athena is licensed under the [NON-COMMERCIAL SOFTWARE LICENSE (NCSL)](https://github.com/Niyko/Athena/blob/main/LICENSE).
+Athena is licensed under the [NCSL)](https://github.com/Niyko/Athena/blob/main/LICENSE).
