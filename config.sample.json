@@ -5,6 +5,14 @@
     "dbPassword": "",
     "dbName": "",
 
+    "clickHouse": true,
+    "clickHouseHost": "<host>:<port>",
+    "clickHouseUsername": "",
+    "clickHousePassword": "",
+    "clickHouseDatabase": "",
+    "clickHouseTableName": "",
+    "clickHouseTableTTL": 12,
+
     "kafkaHost": "",
     "kafkaSASLMechanisms": "PLAIN",
     "kafkaSecurityProtocol": "SASL_SSL",

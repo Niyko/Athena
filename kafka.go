@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"time"
+	"crypto/tls"
+
 	"github.com/fatih/color"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/plain"
-	"crypto/tls"
+	"github.com/getsentry/sentry-go"
 )
 
 func getKafkaWriter() *kafka.Writer {
@@ -41,5 +43,6 @@ func sendMessageToKafka(message kafka.Message, kafkaWriter *kafka.Writer) {
 	error := kafkaWriter.WriteMessages(context.Background(), message)
 	if error != nil {
 		color.Red("Error while connecting to Kafka (%s)", error)
+		sentry.CaptureException(error)
 	}
 }

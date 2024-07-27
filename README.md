@@ -14,6 +14,15 @@ You can find more details about the paramters in config file in below sections.
     "dbPassword": "",
     "dbName": "",
 
+    // If you want to collect logs in clickhouse
+    "clickHouse": true,
+    "clickHouseHost": "<host>:<port>",
+    "clickHouseUsername": "",
+    "clickHousePassword": "",
+    "clickHouseDatabase": "",
+    "clickHouseTableName": "",
+    "clickHouseTableTTL": 12,
+
     "kafkaHost": "",
     "kafkaSASLMechanisms": "PLAIN",
     "kafkaSecurityProtocol": "SASL_SSL",
@@ -82,6 +91,8 @@ You can build the binaries or do development of Athena by following the below st
 
 * Clone that project from Github.
 * Run `go mod download` command to install all mods.
+* Run `SET GORUN=true` command to set gorun variable.
+* Run `SET SENTRYDNS={sentry dns}` command to set sentry dns variable.
 * Run the command `goreleaser release --snapshot --clean` for building the binaries.
 
 ## :page_with_curl: License

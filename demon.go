@@ -11,26 +11,37 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/fatih/color"
 	"github.com/segmentio/kafka-go"
+	"github.com/getsentry/sentry-go"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func startDemon() {
+	var clickhouseDB *sql.DB
+
 	config := getConfig()
 	mssqlDatabase := getMSSQLConnection()
 	sqliteDatabase := getSqliteConnection()
 	kafkaWriter := getKafkaWriter()
 	tables := getAllTablesInMSSQL(mssqlDatabase)
 
+	if config.ClickHouse {
+		clickhouseDB = getClickhouseConnection()
+	}
+
 	defer mssqlDatabase.Close()
 	defer kafkaWriter.Close()
+
+	if config.ClickHouse {
+		defer clickhouseDB.Close()
+	}
 
 	color.Green("🪅  Athena demon has started")
 
 	for {
 		for _, tableName := range tables {
 			if !contains(config.SkippedTables, tableName) {
-				pollChanges(tableName, mssqlDatabase, sqliteDatabase, kafkaWriter, config)
+				pollChanges(tableName, mssqlDatabase, sqliteDatabase, kafkaWriter, clickhouseDB, config)
 			}
 		}
 
@@ -38,7 +49,7 @@ func startDemon() {
 	}
 }
 
-func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.DB, kafkaWriter *kafka.Writer, config Config) {
+func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.DB, kafkaWriter *kafka.Writer, clickhouseDB *sql.DB, config Config) {
 	var cdcLastTableLSN CDCLastTableLSN
 	totalCDCChangesSend := 0
 	sqliteDatabaseResult := sqliteDatabase.First(&cdcLastTableLSN, "table_name = ?", tableName)
@@ -52,6 +63,7 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 
 	if error != nil {
 		color.Red("Error while fetching CDC changes from MSSQL. (%s) and table (%s)", error, tableName)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer rows.Close()
@@ -59,6 +71,7 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 	columns, error := rows.Columns()
 	if error != nil {
 		color.Red("Error while fetching columns CDC changes from MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
@@ -72,6 +85,7 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 		error := rows.Scan(columnValues...)
 		if error != nil {
 			color.Red("Error while fetching column values CDC changes from MSSQL (%s)", error)
+			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 
@@ -94,6 +108,7 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 			kafkaDataString, error := json.Marshal(kafkaData)
 			if error != nil {
 				color.Red("Error while converting kafka data interface to json (%s)", error)
+				sentry.CaptureException(error)
 				os.Exit(0)
 			}
 
@@ -119,23 +134,35 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 	}
 
 	if totalCDCChangesSend > 0 {
+		if config.ClickHouse {
+			clickHouseInsertQuery := fmt.Sprintf(`INSERT INTO %s (count, table, timestamp) VALUES (?, ?, ?)`, config.ClickHouseTableName);
+			_, error = clickhouseDB.Exec(clickHouseInsertQuery, totalCDCChangesSend, tableName, time.Now().Unix())
+
+			if error != nil {
+				color.Red("Error while writing logs to clickhouse (%s)", error)
+				sentry.CaptureException(error)
+				os.Exit(0)
+			}
+		}
+
 		color.White("Total %d CDC changes moved to kafka from [%s]", totalCDCChangesSend, tableName)
 	}
 
 	if error := rows.Err(); error != nil {
 		color.Red("Error while iterating over rows from CDC changes from MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 }
 
 func convertCDCOpertionCode(code int64) string {
 	if code == 1 {
-		return "insert"
-	} else if code == 2 {
 		return "delete"
+	} else if code == 2 {
+		return "insert"
 	} else if code == 4 {
 		return "update"
 	} else {
-		return "INVALID"
+		return "invalid"
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/getsentry/sentry-go"
 	"github.com/fatih/color"
 )
 
@@ -28,6 +29,7 @@ func setupMSSQLCDC() {
 
 		if error != nil {
 			color.Red("Error while checking CDC enabled in MSSQL (%s)", error)
+			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 		defer result.Close()
@@ -66,6 +68,7 @@ func setupMSSQLCDC() {
 
 			if error != nil {
 				color.Red("Error while enabling CDC for [%s] table in MSSQL (%s)", tableName, error)
+				sentry.CaptureException(error)
 				os.Exit(0)
 			}
 			defer result.Close()
@@ -83,10 +86,54 @@ func setupMSSQLCDC() {
 	color.White("✅  CDC installation completed")
 }
 
+func removeCDCHistory() {
+	config := getConfig()
+	database := getMSSQLConnection()
+	defer database.Close()
+
+	tablesList := getAllTablesInMSSQL(database)
+
+	for _, tableName := range tablesList {
+		if contains(config.SkippedTables, tableName) {
+			color.Cyan("🟦  Table [%s] is skipped from tacking as added in config file", tableName)
+			continue
+		}
+
+		if checkMSSQLTableCDCEnabled(tableName, database) {
+			result, error := database.Query(fmt.Sprintf(`
+				DELETE FROM cdc.dbo_%s_CT;
+			`, tableName))
+			_ = result
+
+			if error != nil {
+				color.Red("Error while clearing CDC history for [%s] table in MSSQL (%s)", tableName, error)
+				sentry.CaptureException(error)
+				os.Exit(0)
+			}
+			defer result.Close()
+
+			color.Green("✅  CDC history is cleared in [%s] table level MSSQL", tableName)
+		}
+
+		if !checkMSSQLTableCDCEnabled(tableName, database) {
+			color.Red("Error while clearing CDC history in [%s] table level MSSQL", tableName)
+			os.Exit(0)
+		}
+	}
+
+	color.White("  ")
+
+	runSqliteMigration()
+
+	color.White("  ")
+	color.White("✅  CDC history has been cleared")
+}
+
 func getAllTablesInMSSQL(database *sql.DB) []string {
 	rows, error := database.QueryContext(context.Background(), "SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND TABLE_SCHEMA = 'dbo'")
 	if error != nil {
 		color.Red("Error while getting table list in MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer rows.Close()
@@ -97,6 +144,7 @@ func getAllTablesInMSSQL(database *sql.DB) []string {
 		var tableName string
 		if error := rows.Scan(&tableName); error != nil {
 			color.Red("Error while getting table list in MSSQL (%s)", error)
+			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 		if tableName != "sysdiagrams" && tableName != "systranschemas" {
@@ -106,6 +154,7 @@ func getAllTablesInMSSQL(database *sql.DB) []string {
 
 	if error := rows.Err(); error != nil {
 		color.Red("Error while getting table list in MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
@@ -121,6 +170,7 @@ func checkMSSQLTableCDCEnabled(tableName string, database *sql.DB) bool {
 
 	if error != nil {
 		color.Red("Error while checking CDC enabled in [%s] table level in MSSQL (%s)", tableName, error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer rows.Close()
@@ -137,6 +187,7 @@ func checkMSSQLDatabaseCDCEnabled(config Config, database *sql.DB) bool {
 
 	if error != nil {
 		color.Red("Error while checking CDC enabled in database level in MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer rows.Close()
@@ -157,6 +208,7 @@ func disableMSSQLDatabaseCDC() {
 
 	if error != nil {
 		color.Red("Error while checking CDC disabling in MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer result.Close()
@@ -178,12 +230,14 @@ func getMSSQLConnection() *sql.DB {
 	database, error := sql.Open("sqlserver", connectionString)
 	if error != nil {
 		color.Red("Error while connecting to MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
 	error = database.Ping()
 	if error != nil {
 		color.Red("Error while pinging to MSSQL (%s)", error)
+		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
