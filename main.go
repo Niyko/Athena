@@ -7,11 +7,13 @@ import (
 	"github.com/fatih/color"
 )
 
+var sentryDNS string
+
 func main() {
 	config := getConfig()
 
 	sentry.Init(sentry.ClientOptions{
-		Dsn: os.Getenv("SENTRYDNS"),
+		Dsn: sentryDNS,
 		TracesSampleRate: 1.0,
 		Transport: sentry.NewHTTPSyncTransport(),
 	})
@@ -73,7 +75,7 @@ func uninstallAthena() {
 
 func printHelp() {
 	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.04\n")
-	color.White("Go to https://github.com/cristalhq/acmd for more info")
+	color.White("Go to https://github.com/Niyko/Athena for more info")
 	color.Yellow("\n Usage:")
 	color.New(color.FgGreen).Printf("\trun")
 	color.White(" - To run the change data capture demon\n")

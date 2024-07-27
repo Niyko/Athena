@@ -15,6 +15,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w -X main.sentryDNS={{.Env.SENTRYDNS}}
 
 archives:
   - format: tar.gz
