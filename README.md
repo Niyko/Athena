@@ -96,5 +96,8 @@ You can build the binaries or do development of Athena by following the below st
 * Run `SET SENTRYDNS={sentry dns}` command to set sentry dns variable.
 * Run the command `goreleaser release --snapshot --clean` for building the binaries.
 
+## :zap: Telemetry notice
+This project includes telemetry to help us understand usage patterns and improve the software. We value your privacy and are committed to being transparent about the data we collect.
+
 ## :page_with_curl: License
 Athena is licensed under the [NCSL](https://github.com/Niyko/Athena/blob/main/LICENSE).
