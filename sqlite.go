@@ -7,7 +7,6 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"github.com/getsentry/sentry-go"
 )
 
 type CDCLastTableLSN struct {
@@ -44,7 +43,6 @@ func deleteSqliteDatabase() {
 		error := os.Remove(sqliteFileName)
 		if error != nil {
 			color.Red("Error while deleting SQlite file (%s)", error)
-			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 
@@ -59,7 +57,6 @@ func getSqliteConnection() *gorm.DB {
 
 	if error != nil {
 		color.Red("Error while connecting to SQLite (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 

@@ -3,30 +3,10 @@ package main
 import (
 	"os"
 
-  	"github.com/getsentry/sentry-go"
 	"github.com/fatih/color"
 )
 
-var sentryDNS string
-
 func main() {
-	config := getConfig()
-
-	sentry.Init(sentry.ClientOptions{
-		Dsn: sentryDNS,
-		TracesSampleRate: 1.0,
-		Transport: sentry.NewHTTPSyncTransport(),
-	})
-
-	sentry.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetContext("character", map[string]interface{}{
-			"uuid": config.Uuid,
-			"argument": os.Args,
-		})
-	})
-
-	sentry.CaptureMessage("athena has been started")
-
 	if len(os.Args) > 1 {
 		if os.Args[1] == "run" {
 			startDemon()

@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
-	"github.com/getsentry/sentry-go"
 )
 
 type Config struct {
@@ -45,7 +44,6 @@ func getConfig() Config {
 	configFileContent, error := ioutil.ReadFile(configFilePath)
 	if error != nil {
 		color.Red("Error while reading config file (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
@@ -54,7 +52,6 @@ func getConfig() Config {
 	error = json.Unmarshal(configFileContent, &config)
 	if error != nil {
 		color.Red("Error while parsing config file (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
@@ -75,7 +72,6 @@ func getExePath() string {
 		exeDir, error := os.Getwd()
 		if error != nil {
 			color.Red("Error while getting executable path (%s)", error)
-			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 		
@@ -84,7 +80,6 @@ func getExePath() string {
 		exePath, error := os.Executable()
 		if error != nil {
 			color.Red("Error while getting executable path (%s)", error)
-			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 	

@@ -11,7 +11,6 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/fatih/color"
 	"github.com/segmentio/kafka-go"
-	"github.com/getsentry/sentry-go"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -63,7 +62,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 
 	if error != nil {
 		color.Red("Error while fetching CDC changes from MSSQL. (%s) and table (%s)", error, tableName)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 	defer rows.Close()
@@ -71,7 +69,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 	columns, error := rows.Columns()
 	if error != nil {
 		color.Red("Error while fetching columns CDC changes from MSSQL (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 
@@ -85,7 +82,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 		error := rows.Scan(columnValues...)
 		if error != nil {
 			color.Red("Error while fetching column values CDC changes from MSSQL (%s)", error)
-			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 
@@ -108,7 +104,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 			kafkaDataString, error := json.Marshal(kafkaData)
 			if error != nil {
 				color.Red("Error while converting kafka data interface to json (%s)", error)
-				sentry.CaptureException(error)
 				os.Exit(0)
 			}
 
@@ -140,7 +135,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 
 			if error != nil {
 				color.Red("Error while writing logs to clickhouse (%s)", error)
-				sentry.CaptureException(error)
 				os.Exit(0)
 			}
 		}
@@ -150,7 +144,6 @@ func pollChanges(tableName string, mssqlDatabase *sql.DB, sqliteDatabase *gorm.D
 
 	if error := rows.Err(); error != nil {
 		color.Red("Error while iterating over rows from CDC changes from MSSQL (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
 	}
 }

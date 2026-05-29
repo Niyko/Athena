@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/fatih/color"
 )
@@ -38,7 +37,6 @@ func runClickhouseMigration() {
 		_, error := clickhouseDB.Exec(createTableQuery)
 		if error != nil {
 			color.Red("Error while creating table in clickhouse (%s)", error)
-			sentry.CaptureException(error)
 			os.Exit(0)
 		}
 
@@ -87,7 +85,6 @@ func getClickhouseConnection() *sql.DB {
 
 	if error := clickhouseDB.Ping(); error != nil {
         color.Red("Error while connecting to clickhouse (%s)", error)
-		sentry.CaptureException(error)
 		os.Exit(0)
     }
 

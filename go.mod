@@ -8,7 +8,6 @@ require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.26.0
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/fatih/color v1.16.0
-	github.com/getsentry/sentry-go v0.28.1
 	github.com/glebarez/sqlite v1.10.0
 	github.com/segmentio/kafka-go v0.4.47
 	gorm.io/gorm v1.25.7
@@ -39,7 +38,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.22.5 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
