@@ -113,7 +113,7 @@ Athena can be configured using the `config.json` file created on the root the At
 | `clickHouseTableName` | Table name of Clickhouse server | 10 |
 | `clickHouseTableTTL` | Host name of Clickhouse server | 10 |
 
-## :gear: Helper options in Athena
+## :mushroom: Helper options in Athena
 Athena executable have some other helper functions apart from `setup` or `run` which are explained below. These can be run like eg: `./athena uninstall`
 
 | Option | Description |
@@ -142,6 +142,8 @@ set GORUN=true # Used for identifying if script is run from go run command to ch
 go run . setup
 go run . run
 `````
+
+> Please note that the `docker-compose.yml` in the `dev` folder should only be used for development purpose.
 
 ## :cactus: How to run tests
 Before running the tests, make sure you have setup the development environment and also `config.json` is setup correctly.

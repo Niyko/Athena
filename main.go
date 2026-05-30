@@ -54,7 +54,7 @@ func uninstallAthena() {
 }
 
 func printHelp() {
-	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.04\n")
+	color.New(color.FgCyan, color.Bold).Printf("🪅  Athena • v1.05\n")
 	color.White("Go to https://github.com/Niyko/Athena for more info")
 	color.Yellow("\n Usage:")
 	color.New(color.FgGreen).Printf("\trun")
