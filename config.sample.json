@@ -14,11 +14,12 @@
     "clickHouseTableTTL": 12,
 
     "kafkaHost": "",
-    "kafkaSASLMechanisms": "PLAIN",
-    "kafkaSecurityProtocol": "SASL_SSL",
+    "kafkaEnableTLS": false,
+    "kafkaTopic": "",
+    
+    "kafkaSASLMechanisms": "",
     "kafkaSASLUsername": "",
     "kafkaSASLPassword": "",
-    "kafkaTopic": "",
 
     "pollInterval": 10,
     "fetchLimit": 50,

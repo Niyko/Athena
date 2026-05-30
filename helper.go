@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/fatih/color"
+	"github.com/yosuke-furukawa/json5/encoding/json5"
 )
 
 type Config struct {
@@ -27,9 +26,10 @@ type Config struct {
 	ClickHouseTableTTL int `json:"clickHouseTableTTL"`
 
 	KafkaHost string `json:"kafkaHost"`
+	KafkaEnableTLS bool `json:"kafkaEnableTLS"`
 	KafkaTopic string `json:"kafkaTopic"`
+
 	KafkaSASLMechanisms string `json:"kafkaSASLMechanisms"`
-	KafkaSecurityProtocol string `json:"kafkaSecurityProtocol"`
 	KafkaSASLUsername string `json:"kafkaSASLUsername"`
 	KafkaSASLPassword string `json:"kafkaSASLPassword"`
 
@@ -41,7 +41,7 @@ type Config struct {
 func getConfig() Config {
 	configFilePath := getExePath() + "config.json"
 
-	configFileContent, error := ioutil.ReadFile(configFilePath)
+	configFileContent, error := os.ReadFile(configFilePath)
 	if error != nil {
 		color.Red("Error while reading config file (%s)", error)
 		os.Exit(0)
@@ -49,7 +49,7 @@ func getConfig() Config {
 
 	var config Config
 
-	error = json.Unmarshal(configFileContent, &config)
+	error = json5.Unmarshal(configFileContent, &config)
 	if error != nil {
 		color.Red("Error while parsing config file (%s)", error)
 		os.Exit(0)

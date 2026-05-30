@@ -1,36 +1,76 @@
 package main
 
 import (
+	"os"
 	"context"
 	"time"
 	"crypto/tls"
 
 	"github.com/fatih/color"
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
+	"github.com/segmentio/kafka-go/sasl/scram"
 )
 
 func getKafkaWriter() *kafka.Writer {
 	config := getConfig()
-	mechanism := plain.Mechanism{
-		Username: config.KafkaSASLUsername,
-		Password: config.KafkaSASLPassword,
+
+	dialer := &kafka.Dialer{
+		Timeout: 10 * time.Second,
+		DualStack: true,
 	}
 
-	tlsConfig := &tls.Config{
-		InsecureSkipVerify: false,
+	if config.KafkaEnableTLS {
+		dialer.TLS = &tls.Config{
+			InsecureSkipVerify: false,
+		}
+	}
+
+	if config.KafkaSASLMechanisms != "NONE" {
+		var mechanism sasl.Mechanism
+		var error error
+		
+		switch config.KafkaSASLMechanisms {
+			case "SASL-SCRAM-SHA-256":
+				mechanism, error = scram.Mechanism(
+					scram.SHA256,
+					config.KafkaSASLUsername,
+					config.KafkaSASLPassword,
+				)
+
+				if error != nil {
+					color.Red("Error while initializing SASL-SCRAM-SHA-256. (%s)", error)
+					os.Exit(0)
+				}
+
+			case "SASL-SCRAM-SHA-512":
+				mechanism, error = scram.Mechanism(
+					scram.SHA256,
+					config.KafkaSASLUsername,
+					config.KafkaSASLPassword,
+				)
+
+				if error != nil {
+					color.Red("Error while initializing SASL-SCRAM-SHA-512. (%s)", error)
+					os.Exit(0)
+				}
+
+			default:
+				mechanism = plain.Mechanism{
+					Username: config.KafkaSASLUsername,
+					Password: config.KafkaSASLPassword,
+				}
+		}
+
+		dialer.SASLMechanism = mechanism
 	}
 
 	kafkaConfig := kafka.WriterConfig{
 		Brokers: []string{config.KafkaHost},
 		Topic: config.KafkaTopic,
 		BatchTimeout: 50 * time.Millisecond,
-		Dialer: &kafka.Dialer{
-			SASLMechanism: mechanism,
-			Timeout: 10 * time.Second,
-			DualStack: true,
-			TLS: tlsConfig,
-		},
+		Dialer: dialer,
 	}
 
 	kafkaWriter := kafka.NewWriter(kafkaConfig)
