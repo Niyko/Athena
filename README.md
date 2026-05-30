@@ -128,6 +128,14 @@ Athena can be configured using the `config.json` file created on the root the At
 | `recreate-sqlite` | aaaaaaaa |
 | `help` | aaaaaaaa |
 
+## :hammer_and_wrench: How to run tests
+
+`````bash
+cd tests
+docker compose up -d
+go test -v -run TestIntegration
+`````
+
 ## :hammer_and_wrench: How to build
 You can build the binaries or do development of Athena by following the below steps. Athena is build fully on Golang. So you should install latest version of Go from [here](https://go.dev/doc/install). Do note that building binaries are managed with the [Goreleaser](https://goreleaser.com/).
 

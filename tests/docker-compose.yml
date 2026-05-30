@@ -1,0 +1,65 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    ports:
+      - "1434:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - MSSQL_SA_PASSWORD=x8*HCb2x@3pIJfW#dN
+      - MSSQL_AGENT_ENABLED=true
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  mssql-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - mssql
+    volumes:
+      - ./init.sql:/init.sql
+    entrypoint: >
+      /bin/bash -c "
+      echo 'Waiting for SQL Server...';
+      until /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P 'x8*HCb2x@3pIJfW#dN' -Q 'SELECT 1' > /dev/null 2>&1;
+      do
+        sleep 5;
+      done;
+      echo 'Running initialization script...';
+      /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P 'x8*HCb2x@3pIJfW#dN' -i /init.sql;
+      "
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: redpanda-console
+    ports:
+      - "5000:8080"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKERS: kafka:29092

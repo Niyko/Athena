@@ -15,8 +15,8 @@
 
     "kafkaHost": "",
     "kafkaEnableTLS": false,
-    "kafkaTopic": "",
-    
+    "kafkaTopic": "Athena",
+
     "kafkaSASLMechanisms": "",
     "kafkaSASLUsername": "",
     "kafkaSASLPassword": "",
