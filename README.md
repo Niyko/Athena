@@ -113,26 +113,41 @@ Athena can be configured using the `config.json` file created on the root the At
 | `clickHouseTableName` | Table name of Clickhouse server | 10 |
 | `clickHouseTableTTL` | Host name of Clickhouse server | 10 |
 
-## :gear: Configuring Athena
-Athena can be configured using the `config.json` file created on the root the Athena binary. Here are the details of the configuration keys and what they do in table format.
+## :gear: Helper options in Athena
+Athena executable have some other helper functions apart from `setup` or `run` which are explained below. These can be run like eg: `./athena uninstall`
 
 | Option | Description |
 | --- | --- |
-| `run` | aaaaaaaa |
-| `setup` | aaaaaaaa |
-| `uninstall` | aaaaaaaa |
-| `add-cdc` | aaaaaaaa |
-| `remove-cdc` | aaaaaaaa |
-| `clear-cdc-history` | aaaaaaaa |
-| `recreate-clickhouse` | aaaaaaaa |
-| `recreate-sqlite` | aaaaaaaa |
-| `help` | aaaaaaaa |
+| `uninstall` | Will disable CDC in MSSQL database and remove the SQlite database |
+| `add-cdc` | Will run CDC setup in the MSSQL database |
+| `remove-cdc` | Will disable CDC in MSSQL database |
+| `clear-cdc-history` | Clear CDC history or changes that Athena didn't process yet from the MSSQL database |
+| `recreate-clickhouse` | Rerun the Clickhouse migration |
+| `recreate-sqlite` | Recreate the SQlite database and rerun the migration |
+| `help` | To view all the options available |
 
-## :hammer_and_wrench: How to run tests
+## :triangular_ruler: Development
+For setting up development environment, there is a docker file in the folder `dev`. It will create all necessary services like MSSQL with sample database, Kafka etc. This same environment can be used for running integration tests.
+
+* Install latest version of Go from [here](https://go.dev/doc/install).
+* Clone that project from Github.
+* Run `go mod download` command to install all mods.
+* Then run the commands below as needed.
+
+`````bash
+cd dev
+docker composer up -d
+cd ..
+set GORUN=true # Used for identifying if script is run from go run command to choose correct path for reading config.json or db.sqlite
+go run . setup
+go run . run
+`````
+
+## :cactus: How to run tests
+Before running the tests, make sure you have setup the development environment and also `config.json` is setup correctly.
 
 `````bash
 cd tests
-docker compose up -d
 go test -v -run TestIntegration
 `````
 

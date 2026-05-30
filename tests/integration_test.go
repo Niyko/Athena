@@ -35,12 +35,24 @@ type Config struct {
 func TestIntegration(t *testing.T) {
 	config := loadConfig(t)
 
+	setupCmd := exec.Command("go", "run", ".", "setup")
+	setupCmd.Dir = filepath.Join(filepath.Dir(getTestPath()), "..")
+	setupCmd.Env = append(os.Environ(), "GORUN=1")
+
+	if err := setupCmd.Run(); err != nil {
+		t.Fatal(color.RedString("⛔️ Failed to run setup: %v", err))
+	} else {
+		t.Log(color.GreenString("✅ Successfully run the Athena setup"))
+	}
+
 	cmd := exec.Command("go", "run", ".", "run")
 	cmd.Dir = filepath.Join(filepath.Dir(getTestPath()), "..")
 	cmd.Env = append(os.Environ(), "GORUN=1")
 
 	if err := cmd.Start(); err != nil {
 		t.Fatalf(color.RedString("⛔️ Failed to start Athena daemon: %v", err))
+	} else{
+		t.Log(color.GreenString("✅ Successfully started the Athena daemon"))
 	}
 
 	defer func() {
