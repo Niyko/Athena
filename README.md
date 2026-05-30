@@ -1,11 +1,12 @@
 ![Athena logo](https://i.imgur.com/UQggP60.png)
 Athena is a lightweight Change Data Capture (CDC) solution that streams changes from Microsoft SQL Server to Apache Kafka. Built in Golang, it supports SASL-authenticated Kafka brokers and provides a straightforward setup experience. Unlike alternatives such as Debezium, which can be complex to configure and manage. Athena offers greater simplicity and operational ease. It automatically manages CDC setups, publishes database changes to a single Kafka topic, and delivers a clean, intuitive event format that is easy for downstream consumers to understand and process.
 
-## :cyclone: How things work
+## :zap: How things work
 
 - Creates a message for changes like `create`, `update`, `delete` for rows in MSSQL database tables to a single Kafka topic.
 - Athena only creates messages for all new table changes. Existing ones are ignored.
 - Kafka topic have to be created before hand. Unlike Debezium, Athena will not create the topic own it's own.
+- All CDC setups in MSSQL is automatically done by Athena when `setup` command is run.
 - By default, Athena will poll for changes for all tables, you can use the `skippedTables` option in the `config.json` to ignore any tables.
 
 ## :cyclone: Simple Installation
@@ -15,7 +16,7 @@ You can download the pre-compiled binaries from the Github [releases](https://gi
 You can find more details about the paramters in config file in below sections.
 `````json
 {
-    "dbHost": "",
+    "dbHost": "127.0.0.1",
     "dbPort": 1433,
     "dbUser": "",
     "dbPassword": "",
@@ -34,7 +35,7 @@ You can find more details about the paramters in config file in below sections.
     "skippedTables": [],
 
     // If you want to collect logs in clickhouse
-    "clickHouse": true,
+    "clickHouse": false,
     "clickHouseHost": "<host>:<port>",
     "clickHouseUsername": "",
     "clickHousePassword": "",
@@ -90,26 +91,42 @@ Athena can be configured using the `config.json` file created on the root the At
 
 | Option | Description | Example |
 | --- | --- | --- |
-| `dbHost` | aaaaaaaaaaa | 127.0.0.1 |
-| `dbPort` | aaaaaaaaaaa | 1433 |
-| `dbUser` | aaaaaaaaaaa |  |
-| `dbPassword` | aaaaaaaaaaa |  |
-| `dbName` | aaaaaaaaaaa |  |
-| `kafkaHost` | aaaaaaaaaaa |  |
-| `kafkaTopic` | aaaaaaaaaaa |  |
-| `kafkaEnableTLS` | aaaaaaaaaaa | `true`, `false` |
-| `kafkaSASLMechanisms` | aaaaaaaaaaa | `NONE`, `SASL-PLAIN`, `SASL-SCRAM-SHA-256`, `SASL-SCRAM-SHA-512` |
-| `kafkaSASLUsername` | aaaaaaaaaaa |  |
+| `dbHost` | Database host of MSSQL | 127.0.0.1 |
+| `dbPort` | Database port of MSSQL | 1433 |
+| `dbUser` | Username for the MSSQL database |  |
+| `dbPassword` | Password for the MSSQL database |  |
+| `dbName` | Database name of MSSQL |  |
+| `kafkaHost` | Host with port for the Kafka server  | 127.0.0.1:9092 |
+| `kafkaTopic` | Kafka topic that you created for table changes to show |  |
+| `kafkaEnableTLS` | Enables TLS for Kafka connection | `true`, `false` |
+| `kafkaSASLMechanisms` | SASL mechanism that need to be used for Kafka connection | `NONE`, `SASL-PLAIN`, `SASL-SCRAM-SHA-256`, `SASL-SCRAM-SHA-512` |
+| `kafkaSASLUsername` | SASL user name of the Kafka server |  |
+| `kafkaSASLPassword` | SASL password of the Kafka server |  |
 | `pollInterval` | Interval where next polling to the database is made. It's given in seconds format. | 10 |
 | `fetchLimit` | Number of CDC changes rows that will be pulled from the table at once. | 50 |
 | `skippedTables` | Array of tables that needs to skipped while taking CDC changes. | ["table1", "table2"] |
-| `clickHouse` | aaaaaaaaaaa | 10 |
-| `clickHouseHost` | aaaaaaaaaaa | 10 |
-| `clickHouseUsername` | aaaaaaaaaaa | 10 |
-| `clickHousePassword` | aaaaaaaaaaa | 10 |
-| `clickHouseDatabase` | aaaaaaaaaaa | 10 |
-| `clickHouseTableName` | aaaaaaaaaaa | 10 |
-| `clickHouseTableTTL` | aaaaaaaaaaa | 10 |
+| `clickHouse` | Enable Clickhouse logs. Table and struture for Clickhouse is automatically created by Athena when `setup` command is run | 10 |
+| `clickHouseHost` | Host name of Clickhouse server | 10 |
+| `clickHouseUsername` | User name of Clickhouse server | 10 |
+| `clickHousePassword` | Password of Clickhouse server | 10 |
+| `clickHouseDatabase` | Dasebase name of Clickhouse server | 10 |
+| `clickHouseTableName` | Table name of Clickhouse server | 10 |
+| `clickHouseTableTTL` | Host name of Clickhouse server | 10 |
+
+## :gear: Configuring Athena
+Athena can be configured using the `config.json` file created on the root the Athena binary. Here are the details of the configuration keys and what they do in table format.
+
+| Option | Description |
+| --- | --- |
+| `run` | aaaaaaaa |
+| `setup` | aaaaaaaa |
+| `uninstall` | aaaaaaaa |
+| `add-cdc` | aaaaaaaa |
+| `remove-cdc` | aaaaaaaa |
+| `clear-cdc-history` | aaaaaaaa |
+| `recreate-clickhouse` | aaaaaaaa |
+| `recreate-sqlite` | aaaaaaaa |
+| `help` | aaaaaaaa |
 
 ## :hammer_and_wrench: How to build
 You can build the binaries or do development of Athena by following the below steps. Athena is build fully on Golang. So you should install latest version of Go from [here](https://go.dev/doc/install). Do note that building binaries are managed with the [Goreleaser](https://goreleaser.com/).
