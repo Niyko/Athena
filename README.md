@@ -105,13 +105,13 @@ Athena can be configured using the `config.json` file created on the root the At
 | `pollInterval` | Interval where next polling to the database is made. It's given in seconds format. | 10 |
 | `fetchLimit` | Number of CDC changes rows that will be pulled from the table at once. | 50 |
 | `skippedTables` | Array of tables that needs to skipped while taking CDC changes. | ["table1", "table2"] |
-| `clickHouse` | Enable Clickhouse logs. Table and struture for Clickhouse is automatically created by Athena when `setup` command is run | 10 |
-| `clickHouseHost` | Host name of Clickhouse server | 10 |
-| `clickHouseUsername` | User name of Clickhouse server | 10 |
-| `clickHousePassword` | Password of Clickhouse server | 10 |
-| `clickHouseDatabase` | Dasebase name of Clickhouse server | 10 |
-| `clickHouseTableName` | Table name of Clickhouse server | 10 |
-| `clickHouseTableTTL` | Host name of Clickhouse server | 10 |
+| `clickHouse` | Enable Clickhouse logs. Table and struture for Clickhouse is automatically created by Athena when `setup` command is run | `true`, `false` |
+| `clickHouseHost` | Host with port for the Clickhouse server | 127.0.0.1:8123 |
+| `clickHouseUsername` | User name of Clickhouse server |  |
+| `clickHousePassword` | Password of Clickhouse server |  |
+| `clickHouseDatabase` | Dasebase name of Clickhouse server |  |
+| `clickHouseTableName` | Table name of Clickhouse server |  |
+| `clickHouseTableTTL` | Time to live for each record in hours | 24 |
 
 ## :mushroom: Helper options in Athena
 Athena executable have some other helper functions apart from `setup` or `run` which are explained below. These can be run like eg: `./athena uninstall`

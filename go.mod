@@ -10,6 +10,7 @@ require (
 	github.com/fatih/color v1.16.0
 	github.com/glebarez/sqlite v1.10.0
 	github.com/segmentio/kafka-go v0.4.47
+	github.com/yosuke-furukawa/json5 v0.1.1
 	gorm.io/gorm v1.25.7
 )
 
@@ -37,7 +38,6 @@ require (
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
-	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
 	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
